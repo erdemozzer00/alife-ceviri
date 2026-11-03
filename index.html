@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project A-Life Çevirisi</title>
+<style>
+:root{--bg:#fafaf8;--fg:#1c1c1a;--muted:#77756f;--line:#e4e2dc;--hl:#fff3b0;--ph:#eef0f3;--acc:#1c1c1a;--ed:#fbf3d6;--edl:#c9a227;--ok:#2e8b57;--okbg:#e6f3ea;--bad:#c0392b;--ust:120px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151514;--fg:#e8e6e1;--muted:#8f8c85;--line:#2c2b29;--hl:#5a4b12;--ph:#24262a;--acc:#e8e6e1;--ed:#2f2914;--edl:#a8861c;--ok:#4cc38a;--okbg:#17291f;--bad:#ff7a6b}}
+:root[data-theme="dark"]{--bg:#151514;--fg:#e8e6e1;--muted:#8f8c85;--line:#2c2b29;--hl:#5a4b12;--ph:#24262a;--acc:#e8e6e1;--ed:#2f2914;--edl:#a8861c;--ok:#4cc38a;--okbg:#17291f;--bad:#ff7a6b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line);padding:12px 16px;z-index:2}
+.wrap{max-width:1440px;margin:0 auto}
+.ust{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;margin-bottom:8px}
+h1{font-size:17px;font-weight:600;margin:0}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tab{border:1px solid var(--line);background:none;color:var(--fg);padding:6px 12px;border-radius:6px;font:inherit;cursor:pointer}
+.tab[aria-pressed="true"]{background:var(--acc);color:var(--bg);border-color:var(--acc)}
+input,select{border:1px solid var(--line);background:none;color:var(--fg);padding:7px 10px;border-radius:6px;font:inherit}
+select option{background:var(--bg);color:var(--fg)}
+#q{flex:1;min-width:180px}
+.say{color:var(--muted);font-size:13px;white-space:nowrap}
+.ipucu{color:var(--muted);font-size:13px;margin:0 0 8px}
+.btn{border:1px solid var(--line);background:none;color:var(--fg);padding:6px 12px;border-radius:6px;font:inherit;cursor:pointer}
+.btn.ana{background:var(--acc);color:var(--bg);border-color:var(--acc)}
+.btn[aria-pressed="true"]{border-color:var(--edl);background:var(--ed)}
+.btn:disabled{opacity:.5;cursor:default}
+.tab sup{font-size:11px;margin-left:3px;color:var(--edl)}
+.tab[aria-pressed="true"] sup{color:inherit}
+
+.duzen{display:grid;grid-template-columns:320px minmax(0,1fr);gap:28px;padding:0 16px}
+aside{position:sticky;top:var(--ust);max-height:calc(100vh - var(--ust));overflow:auto;padding:14px 4px 40px 0;border-right:1px solid var(--line)}
+.yanac{display:none}
+.genel{font-size:13px;color:var(--muted);margin:0 8px 10px 0}
+.genel b{color:var(--fg)}
+.cubuk{height:4px;border-radius:2px;background:var(--ph);overflow:hidden}
+.cubuk i{display:block;height:100%;background:var(--ok)}
+.yanust{display:flex;gap:6px;margin:10px 8px 10px 0}
+.yanust input{flex:1;min-width:0;padding:5px 8px;font-size:14px}
+.yanust select{padding:5px 6px;font-size:13px}
+.konu{display:block;width:100%;text-align:left;border:0;background:none;color:var(--fg);font:inherit;font-size:13px;padding:5px 8px;border-radius:5px;cursor:pointer}
+.konu:hover{background:var(--ph)}
+.konu[aria-current="true"]{background:var(--ph);box-shadow:inset 3px 0 var(--acc)}
+.konu .ad{display:flex;justify-content:space-between;gap:8px}
+.konu .ad span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.konu .m{color:var(--muted);font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.konu .cubuk{margin-top:3px}
+.konu .et{font-size:11px;color:var(--muted)}
+.konu .et .kim{color:var(--ok)}
+.konu.bitti .ad span:first-child{color:var(--muted)}
+.ozel{margin:0 8px 8px 0;border-bottom:1px solid var(--line);padding-bottom:8px}
+aside details{margin:0 8px 2px 0}
+aside summary{cursor:pointer;font-size:13px;font-weight:600;padding:5px 4px;display:flex;justify-content:space-between;gap:8px;list-style:none;border-radius:5px}
+aside summary::-webkit-details-marker{display:none}
+aside summary:hover{background:var(--ph)}
+aside summary::before{content:"▸";color:var(--muted);margin-right:4px}
+aside details[open]>summary::before{content:"▾"}
+aside summary span:first-of-type{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+aside details>div{padding-left:10px}
+
+main{min-width:0;padding:14px 0 64px}
+.kbas{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
+.kbas h2{font-size:18px;margin:0;font-weight:600;overflow-wrap:anywhere}
+.kbas .alt{color:var(--muted);font-size:13px}
+.kbas .cubuk{width:200px;margin-top:6px;height:6px;border-radius:3px}
+.kbtn{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.kisa{color:var(--muted);font-size:12px;margin:4px 0 0}
+kbd{font:11px ui-monospace,Consolas,monospace;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 4px;color:var(--fg)}
+.row{display:grid;grid-template-columns:30px 1fr 1fr;gap:16px;padding:10px 0;border-bottom:1px solid var(--line);scroll-margin-top:calc(var(--ust) + 60px);scroll-margin-bottom:40px}
+.row>div{white-space:pre-wrap;overflow-wrap:anywhere}
+.row.akt{background:linear-gradient(90deg,var(--ph),transparent 85%)}
+.head{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.05em;padding:12px 0 4px}
+.grp{color:var(--muted);font-size:12px;padding:16px 0 4px 46px;border-bottom:1px solid var(--line)}
+.grp b{color:var(--fg);font-weight:600;font:12px ui-monospace,Consolas,monospace}
+.ok{width:24px;height:24px;margin-top:1px;border:1.5px solid var(--line);border-radius:50%;background:none;color:transparent;cursor:pointer;font-size:13px;line-height:1;padding:0}
+.ok:hover{border-color:var(--ok);color:var(--ok)}
+.ok.on{background:var(--ok);border-color:var(--ok);color:var(--bg)}
+.yerimi{grid-column:2/-1;font-size:12px;color:var(--muted);margin-bottom:-6px}
+.yerimi button{border:0;background:none;color:inherit;font:inherit;padding:0;cursor:pointer;text-decoration:underline}
+.sup{display:block;color:var(--bad);font-size:12px;margin-top:4px}
+code{background:var(--ph);border-radius:3px;padding:0 3px;font:13px ui-monospace,Consolas,monospace}
+mark{background:var(--hl);color:inherit;border-radius:2px}
+.tr{cursor:text;border-radius:4px;margin:-2px -6px;padding:2px 6px}
+.tr:hover{background:var(--ph)}
+.tr.duz{background:var(--ed);box-shadow:inset 3px 0 var(--edl)}
+.tr .eski{display:block;color:var(--muted);font-size:13px;text-decoration:line-through;margin-top:4px}
+.tr .alt{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+.tr .uyari{display:block;color:var(--edl);font-size:12px;margin-top:4px}
+.tr .kimde{display:block;color:var(--ok);font-size:12px;margin-top:4px}
+.tr textarea{display:block;width:100%;min-height:2.6em;border:1px solid var(--acc);border-radius:4px;background:var(--bg);color:var(--fg);font:inherit;padding:4px 6px;resize:vertical}
+.tr .kisayol{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.bos{color:var(--muted);padding:24px 0}
+.ekip{margin:8px 0 0;border:1px solid var(--line);border-radius:6px;padding:6px 12px}
+.ekip summary{cursor:pointer;color:var(--muted);font-size:13px}
+.ekip summary b{color:var(--fg);font-weight:600}
+.ekip ul{list-style:none;margin:10px 0 2px;padding:0;display:grid;gap:8px}
+.ekip li{display:grid;grid-template-columns:110px 1fr 150px;gap:10px;align-items:center;font-size:13px}
+.ekip .cubuk{height:6px;border-radius:3px}
+.ekip .cubuk i{background:var(--edl);border-radius:3px}
+.ekip .sayi{color:var(--muted);text-align:right}
+.ekip p{margin:8px 0 2px;color:var(--muted);font-size:12px}
+.nokta{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--muted);margin-right:6px}
+.nokta.acik{background:var(--ok)}
+.nokta.kapali{background:var(--bad)}
+.giris{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.giris input{width:190px}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--acc);color:var(--bg);padding:8px 14px;border-radius:6px;font-size:14px;max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s;z-index:5}
+#toast.goster{opacity:1}
+@media (max-width:900px){
+  .duzen{grid-template-columns:1fr;gap:0}
+  aside{position:static;max-height:none;border-right:0;border-bottom:1px solid var(--line);padding:8px 0}
+  aside.kapali>:not(.yanac){display:none}
+  .yanac{display:block;width:100%;margin-bottom:8px}
+  .kisa{display:none}
+}
+@media (max-width:640px){
+  header{position:static}
+  .row{grid-template-columns:30px 1fr;gap:4px 12px}
+  .row>.tr{grid-column:2;padding-left:10px;border-left:2px solid var(--line);margin-left:0}
+  .head{display:none}
+  .grp{padding-left:42px}
+  .ekip li{grid-template-columns:90px 1fr;}.ekip .sayi{grid-column:1/-1;text-align:left}
+}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<div class="ust">
+<h1>Project A-Life · İngilizce ↔ Türkçe</h1>
+<div class="giris" id="giris"></div>
+</div>
+<p class="ipucu" id="ipucu"></p>
+<div class="bar">
+<button class="tab" data-f="IG_UI">IG_UI</button>
+<button class="tab" data-f="Sandbox">Sandbox</button>
+<button class="tab" data-f="UI">UI</button>
+<button class="tab" data-f="Lua">Lua</button>
+<button class="tab" data-f="Oluşturucu">Oluşturucu</button>
+<button class="tab" data-f="Diyalog">Diyalog</button>
+<input id="q" type="search" placeholder="Bu sekmede ara (İngilizce ya da Türkçe)…" autocomplete="off">
+<span class="say" id="duzsay"></span>
+<select id="kimsel" aria-label="Düzelten kişi"><option value="">Düzelten: herkes</option></select>
+<button class="btn ana" id="indir">Düzeltmeleri indir</button>
+</div>
+<details class="ekip" id="ekip" hidden><summary id="ekipozet"></summary><ul id="ekipliste"></ul><p>Çubuklar yalnızca ekibin birlikte nereye geldiğini gösterir; sıralama yoktur.</p></details>
+</div></header>
+<div class="duzen wrap">
+<aside id="yan">
+<button class="btn yanac" id="yanac">Konular ▾</button>
+<div class="genel" id="genel"></div>
+<div class="yanust">
+<input id="kara" type="search" placeholder="Konu ara…" autocomplete="off">
+<select id="yanfiltre" aria-label="Konu filtresi">
+<option value="hepsi">Hepsi</option>
+<option value="bitmemis">Bitmemiş</option>
+<option value="bos">Kimsenin almadığı</option>
+<option value="benim">Üstlendiklerim</option>
+</select>
+</div>
+<div class="ozel" id="ozel"></div>
+<div id="konular"></div>
+</aside>
+<main>
+<div id="kbas"></div>
+<div class="head row"><span></span><span>İngilizce</span><span>Türkçe</span></div>
+<div id="list"></div>
+</main>
+</div>
+<div id="toast" role="status"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+// Herkese açık (yalnızca okuma) anahtar; yazma erişim koduyla RPC üzerinden olur.
+const SB_URL = 'https://kkantiireaegiypwmkqt.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrYW50aWlyZWFlZ2l5cHdta3F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMwMzI2NzUsImV4cCI6MjEwODYwODY3NX0.85n893q7dnyzANpufSF_Ugfqvl-_MiyzZpDJu80QWaI';
+const sb = supabase.createClient(SB_URL, SB_KEY, { auth: { persistSession: false } });
+
+const SAYFA = 1000, SEKMELER = ['IG_UI', 'Sandbox', 'UI', 'Lua', 'Oluşturucu', 'Diyalog'];
+const D = new Map();          // "sekme|anahtar" -> {s, k, yeni, eski, kim, t}
+const KIMDE = new Map();      // "sekme|anahtar" -> {kim, t}: şu an kim düzenliyor
+const ACIK = new Set();       // açık bölümler (kenar çubuğu)
+let dosya = 'IG_UI', KONU = [], secim = null, ROWS = [], SATIR = new Map(), gorunen = [], imlec = -1;
+let filtre = 'hepsi', yanFiltre = 'hepsi', secilenKim = '';
+let benim = null, kod = '', kanal = null, canliDurum = '';
+try { const s = localStorage.getItem('dosya'); if (SEKMELER.includes(s)) dosya = s; } catch (e) {}
+try { kod = localStorage.getItem('kod') || ''; } catch (e) {}
+
+const $ = id => document.getElementById(id);
+const kimlik = (s, k) => s + '|' + k;
+const kac = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const kucuk = s => s.toLocaleLowerCase('tr');
+let toastT;
+function bildir(m) { const t = $('toast'); t.textContent = m; t.classList.add('goster'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('goster'), 3500); }
+const ustAyarla = () => document.documentElement.style.setProperty('--ust', document.querySelector('header').offsetHeight + 'px');
+window.addEventListener('resize', ustAyarla);
+
+function zaman(t) {
+  const sn = (Date.now() - new Date(t).getTime()) / 1000;
+  if (sn < 60) return 'az önce';
+  if (sn < 3600) return Math.floor(sn / 60) + ' dk önce';
+  if (sn < 86400) return Math.floor(sn / 3600) + ' sa önce';
+  return new Date(t).toLocaleDateString('tr', { day: 'numeric', month: 'short' });
+}
+
+// Yer tutucu / satır sonu uyuşmazlığı (engellemez, uyarır). {he}/{him}/{sir}… Türkçede düşebilir (paket_kontrol ile aynı).
+function kontrol(en, tr) {
+  const tok = s => (s.match(/\{(?!(?:he|him|his|hers|himself|sir|mister)\})[a-z]+\}|%%/g) || []).sort().join(' ');
+  const nl = s => (s.match(/\n/g) || []).length;
+  const m = [];
+  if (tok(en) !== tok(tr)) m.push('yer tutucu ({…} / %%) İngilizcesiyle aynı değil');
+  if (nl(en) !== nl(tr)) m.push('satır sayısı İngilizcesinden farklı (' + nl(en) + ' → ' + nl(tr) + ')');
+  return m.length ? 'Dikkat: ' + m.join('; ') : '';
+}
+
+// Diyalog koşulu: "reg=civilian,family|st=friendly" -> "grup: civilian, family · tutum: friendly"
+const KOSUL = { reg: 'grup', role: 'rol', tmp: 'mizaç', st: 'tutum', mood: 'ruh hali', day: 'gün', world: 'yer', r1: '1. kişi', r2: '2. kişi', out: 'sonuç', season: 'mevsim', time: 'saat' };
+const kosulYaz = s => s.split('|').map(p => { const [a, ...b] = p.split('='); return (KOSUL[a] || a) + ': ' + b.join('=').replace(/,/g, ', '); }).join(' · ');
+const sahneli = b => /sahne/i.test(b);
+const konuAdi = c => c.sahne_say > 1 ? c.konu + ' +' + (c.sahne_say - 1) + (sahneli(c.bolum) ? ' sahne' : ' konu') : c.konu;
+
+// ---- Veri ----
+async function hepsi(tablo, sutun, sirala) {
+  const tum = [];
+  for (let a = 0; ; a += SAYFA) {
+    let sorgu = sb.from(tablo).select(sutun);
+    for (const s of sirala) sorgu = sorgu.order(s);
+    const { data, error } = await sorgu.range(a, a + SAYFA - 1);
+    if (error) throw error;
+    tum.push(...data);
+    if (data.length < SAYFA) return tum;
+  }
+}
+async function konuYukle() {
+  const s = dosya, tum = [];
+  for (let a = 0; ; a += SAYFA) {
+    const { data, error } = await sb.rpc('konu_ozet', { p_sekme: s }).range(a, a + SAYFA - 1);
+    if (error) throw error;
+    tum.push(...data);
+    if (data.length < SAYFA) break;
+  }
+  if (s === dosya) KONU = tum;
+}
+const satirOf = r => ({ k: r.anahtar, en: r.en, tr: r.tr, b: r.bolum, ko: r.konu, sa: r.sahne, kos: r.kosul, sup: r.supheli, ok: r.okuyan });
+async function satirGetir(arg) {
+  const { data, error } = await sb.rpc('satirlar', Object.assign({ p_sekme: dosya }, arg));
+  if (error) throw error;
+  return data.map(satirOf);
+}
+const duzSatir = r => ({ s: r.sekme, k: r.anahtar, yeni: r.yeni, eski: r.eski, kim: r.kim, t: r.guncellendi });
+const trOf = r => { const d = D.get(kimlik(dosya, r.k)); return d ? d.yeni : r.tr; };
+const secKonu = () => secim && secim.tur === 'konu' ? KONU.find(c => c.bolum === secim.b && c.konu === secim.k) : null;
+
+// ---- Kenar çubuğu ----
+function yanCiz() {
+  const yan = $('yan'), kaydir = yan.scrollTop;
+  let top = 0, ok = 0, sup = 0;
+  for (const c of KONU) { top += c.toplam; ok += c.okunan; sup += c.supheli; }
+  const yuzde = top ? Math.floor(ok / top * 100) : 0;
+  $('genel').innerHTML = 'Bu sekmede <b>' + ok.toLocaleString('tr') + '</b> / ' + top.toLocaleString('tr') + ' satır okundu (%' + yuzde + ')' +
+    '<div class="cubuk" style="margin-top:4px"><i style="width:' + yuzde + '%"></i></div>';
+  const duzSay = [...D.values()].filter(d => d.s === dosya && (!secilenKim || d.kim === secilenKim)).length;
+  $('ozel').innerHTML =
+    '<button class="konu" data-ozel="supheli"' + (secim && secim.tur === 'supheli' ? ' aria-current="true"' : '') + '><span class="ad"><span>⚠ Önce bakılacaklar</span><span class="m">' + sup + '</span></span><span class="et">yer tutucu, eksik çeviri, İngilizce kalmış…</span></button>' +
+    '<button class="konu" data-ozel="duz"' + (secim && secim.tur === 'duz' ? ' aria-current="true"' : '') + '><span class="ad"><span>✎ Düzeltilenler' + (secilenKim ? ' · ' + kac(secilenKim) : '') + '</span><span class="m">' + duzSay + '</span></span></button>';
+
+  const q = kucuk($('kara').value.trim());
+  const gor = c => (!q || kucuk(c.konu).includes(q) || kucuk(c.bolum).includes(q)) &&
+    (yanFiltre === 'hepsi' || (yanFiltre === 'bitmemis' && c.okunan < c.toplam) ||
+     (yanFiltre === 'benim' && benim && c.ustlenen === benim) || (yanFiltre === 'bos' && !c.ustlenen && c.okunan < c.toplam));
+  const sk = secKonu();
+  const konuHtml = c => {
+    const i = KONU.indexOf(c), y = Math.floor(c.okunan / c.toplam * 100);
+    const et = [];
+    if (c.ustlenen) et.push('<span class="kim">● ' + kac(c.ustlenen) + '</span>');
+    if (c.supheli) et.push('⚠ ' + c.supheli);
+    if (c.duzeltilen) et.push('✎ ' + c.duzeltilen);
+    return '<button class="konu' + (c.okunan >= c.toplam ? ' bitti' : '') + '" data-i="' + i + '"' + (c === sk ? ' aria-current="true"' : '') + ' title="' + kac(c.konu) + '">' +
+      '<span class="ad"><span>' + kac(konuAdi(c)) + '</span><span class="m">' + c.okunan + '/' + c.toplam + '</span></span>' +
+      '<div class="cubuk"><i style="width:' + y + '%"></i></div>' + (et.length ? '<span class="et">' + et.join(' · ') + '</span>' : '') + '</button>';
+  };
+  const gruplar = new Map();
+  for (const c of KONU) if (gor(c)) { if (!gruplar.has(c.bolum)) gruplar.set(c.bolum, []); gruplar.get(c.bolum).push(c); }
+  let h = '';
+  for (const [b, liste] of gruplar) {
+    if (!b) { h += liste.map(konuHtml).join(''); continue; }
+    let bt = 0, bo = 0;
+    for (const c of liste) { bt += c.toplam; bo += c.okunan; }
+    const acik = q || ACIK.has(b) || (sk && sk.bolum === b);
+    h += '<details data-b="' + kac(b) + '"' + (acik ? ' open' : '') + '><summary><span>' + kac(b) + '</span><span class="m">' + Math.floor(bo / bt * 100) + '%</span></summary><div>' + liste.map(konuHtml).join('') + '</div></details>';
+  }
+  $('konular').innerHTML = h || '<p class="say">Eşleşen konu yok.</p>';
+  yan.scrollTop = kaydir;
+}
+$('konular').addEventListener('toggle', e => {
+  const b = e.target.dataset && e.target.dataset.b;
+  if (b !== undefined) { if (e.target.open) ACIK.add(b); else ACIK.delete(b); }
+}, true);
+$('yan').addEventListener('click', e => {
+  const btn = e.target.closest('.konu');
+  if (!btn) return;
+  if (btn.dataset.ozel) ac({ tur: btn.dataset.ozel });
+  else { const c = KONU[+btn.dataset.i]; ac({ tur: 'konu', b: c.bolum, k: c.konu }); }
+  if (matchMedia('(max-width:900px)').matches) $('yan').classList.add('kapali');
+});
+$('yanac').onclick = () => $('yan').classList.toggle('kapali');
+let kt; $('kara').oninput = () => { clearTimeout(kt); kt = setTimeout(yanCiz, 120); };
+$('yanfiltre').onchange = e => { yanFiltre = e.target.value; yanCiz(); };
+
+// ---- Ana bölüm ----
+function boya(s, q) {
+  const kod = x => kac(x).replace(/\{[^{}\s]+\}|%%/g, m => '<code>' + m + '</code>');
+  if (q) {
+    const i = kucuk(s).indexOf(q);
+    if (i >= 0) return kod(s.slice(0, i)) + '<mark>' + kac(s.slice(i, i + q.length)) + '</mark>' + kod(s.slice(i + q.length));
+  }
+  return kod(s);
+}
+const aramaQ = () => secim && secim.tur === 'ara' ? kucuk(secim.q) : '';
+function trHtml(r) {
+  const q = aramaQ(), id = kimlik(dosya, r.k), d = D.get(id), p = KIMDE.get(id);
+  const kimde = p && p.kim !== benim && Date.now() - p.t < 90000 ? '<span class="kimde">✎ ' + kac(p.kim) + ' düzenliyor</span>' : '';
+  const sup = r.sup && !d ? '<span class="sup">⚠ ' + kac(r.sup) + '</span>' : '';
+  if (!d) return '<div class="tr" data-k="' + kac(r.k) + '">' + boya(r.tr, q) + sup + kimde + '</div>';
+  let h = '<div class="tr duz" data-k="' + kac(r.k) + '">' + boya(d.yeni, q) + '<span class="eski">' + kac(r.tr) + '</span>';
+  h += '<span class="alt">' + kac(d.kim) + ' · ' + zaman(d.t) + '</span>';
+  const u = kontrol(r.en, d.yeni);
+  if (u) h += '<span class="uyari">' + kac(u) + '</span>';
+  if (d.eski !== r.tr) h += '<span class="uyari">Bu düzeltmeden sonra satırın onaylı çevirisi değişti; üstteki çizili metin şimdiki hali.</span>';
+  return h + kimde + '</div>';
+}
+function okHtml(r) {
+  return '<button class="ok' + (r.ok ? ' on' : '') + '" data-k="' + kac(r.k) + '" title="' + (r.ok ? kac(r.ok) + ' okudu · geri almak için tıkla' : 'Okudum, doğru (Boşluk)') + '" aria-label="Okundu">✓</button>';
+}
+function satirHtml(r, i) {
+  const yerimi = secim.tur !== 'konu' && r.ko ? '<span class="yerimi">' + kac(r.b ? r.b + ' › ' : '') + '<button data-git="' + i + '">' + kac(r.ko) + '</button>' + (r.sa && r.sa !== r.ko ? ' · ' + kac(r.sa) : '') + '</span>' : '';
+  return '<div class="row' + (i === imlec ? ' akt' : '') + '" data-i="' + i + '">' + yerimi + okHtml(r) + '<div>' + boya(r.en, aramaQ()) + '</div>' + trHtml(r) + '</div>';
+}
+function filtreUy(r) {
+  if (filtre === 'okunmamis') return !r.ok;
+  if (filtre === 'supheli') return !!r.sup;
+  if (filtre === 'duz') return D.has(kimlik(dosya, r.k));
+  return true;
+}
+function kbasCiz() {
+  const c = secKonu();
+  const okSay = ROWS.filter(r => r.ok).length;
+  let baslik, alt;
+  if (secim.tur === 'konu') {
+    baslik = c ? konuAdi(c) : secim.k;
+    alt = (secim.b ? secim.b + ' · ' : '') + ROWS.length + ' satır';
+  } else if (secim.tur === 'supheli') { baslik = '⚠ Önce bakılacaklar'; alt = 'Yer tutucusu tutmayan, çevirisi eksik, İngilizce kalmış ya da uzunluğu tuhaf satırlar' + (ROWS.length >= 500 ? ' (ilk 500)' : ''); }
+  else if (secim.tur === 'duz') { baslik = '✎ Düzeltilenler' + (secilenKim ? ' · ' + secilenKim : ''); alt = ROWS.length + ' satır'; }
+  else { baslik = 'Arama: “' + secim.q + '”'; alt = ROWS.length + (ROWS.length >= 500 ? '+ (ilk 500)' : '') + ' sonuç'; }
+  const y = ROWS.length ? Math.floor(okSay / ROWS.length * 100) : 0;
+  $('yanac').textContent = 'Konular ▾ · ' + baslik;
+  let btn = '';
+  if (c) {
+    if (!c.ustlenen) btn += '<button class="btn" id="ustlen">Bu konuyu üstlen</button>';
+    else if (c.ustlenen === benim) btn += '<button class="btn" id="birak" aria-pressed="true">Üstlendin · bırak</button>';
+    else btn += '<button class="btn" id="birak">' + kac(c.ustlenen) + ' üstlendi · bırak</button>';
+  }
+  btn += '<select id="filtre" aria-label="Satır filtresi">' + [['hepsi', 'Tüm satırlar'], ['okunmamis', 'Okunmamışlar'], ['supheli', '⚠ Şüpheliler'], ['duz', '✎ Düzeltilenler']]
+    .map(([v, t]) => '<option value="' + v + '"' + (v === filtre ? ' selected' : '') + '>' + t + '</option>').join('') + '</select>';
+  btn += '<button class="btn" id="hepsiok">Görünenleri okundu yap</button>';
+  if (secim.tur === 'konu') btn += '<button class="btn ana" id="sonraki">Sonraki konu →</button>';
+  $('kbas').innerHTML = '<div class="kbas"><div><h2>' + kac(baslik) + '</h2><div class="alt">' + kac(alt) + ' · <b>' + okSay + '</b> okundu</div>' +
+    '<div class="cubuk"><i style="width:' + y + '%"></i></div></div><div class="kbtn">' + btn + '</div></div>' +
+    '<p class="kisa"><kbd>J</kbd>/<kbd>K</kbd> satır · <kbd>Boşluk</kbd> okundu ve sonraki · <kbd>Enter</kbd> düzelt · <kbd>N</kbd> sonraki konu · ✓ işareti satırın şimdiki Türkçesine bağlıdır, Türkçe değişirse kalkar.</p>';
+  const f = $('filtre'); f.onchange = () => { filtre = f.value; listeCiz(); };
+  $('hepsiok').onclick = () => {
+    const ks = gorunen.filter(r => !r.ok).map(r => r.k);
+    if (!ks.length) return bildir('Görünen satırların hepsi zaten okundu.');
+    if (ks.length > 40 && !confirm(ks.length + ' satır okundu işaretlenecek. Hepsini gerçekten okudun mu?')) return;
+    okIsaretle(ks, true);
+  };
+  if ($('sonraki')) $('sonraki').onclick = sonrakiKonu;
+  if ($('ustlen')) $('ustlen').onclick = () => ustlen(true);
+  if ($('birak')) $('birak').onclick = () => { if (c.ustlenen === benim || confirm(c.ustlenen + ' bu konuyu üstlenmiş. Yine de bırakılsın mı?')) ustlen(false); };
+}
+function listeCiz() {
+  kbasCiz();
+  gorunen = ROWS.filter(filtreUy);
+  if (imlec >= gorunen.length) imlec = gorunen.length - 1;
+  let h = '', onceki = null;
+  gorunen.forEach((r, i) => {
+    const g = secim.tur === 'konu' ? (r.sa || '') + '|' + (r.kos || '') : null;
+    if (g !== null && g !== onceki && (r.sa || r.kos)) {
+      const sa = r.sa && r.sa !== onceki?.split('|')[0] ? '<b>' + kac(r.sa) + '</b>' : '';
+      h += '<div class="grp">' + sa + (sa && r.kos ? ' · ' : '') + (r.kos ? kac(kosulYaz(r.kos)) : '') + '</div>';
+    }
+    onceki = g;
+    h += satirHtml(r, i);
+  });
+  $('list').innerHTML = h || '<p class="bos">' + (ROWS.length ? 'Bu filtrede satır yok.' : 'Satır yok.') + '</p>';
+}
+function satirYenile(s, k) {
+  if (s !== dosya) return;
+  const i = gorunen.findIndex(r => r.k === k);
+  if (i < 0) return;
+  const el = $('list').querySelector('.row[data-i="' + i + '"]');
+  if (!el || el.querySelector('textarea')) return;
+  el.outerHTML = satirHtml(gorunen[i], i);
+}
+function imlecKoy(i, kaydir) {
+  if (!gorunen.length) return;
+  i = Math.max(0, Math.min(gorunen.length - 1, i));
+  const eski = $('list').querySelector('.row.akt');
+  if (eski) eski.classList.remove('akt');
+  imlec = i;
+  const el = $('list').querySelector('.row[data-i="' + i + '"]');
+  if (el) { el.classList.add('akt'); if (kaydir) el.scrollIntoView({ block: 'nearest' }); }
+}
+
+async function ac(yeni) {
+  secim = yeni; imlec = -1;
+  if (yeni.tur === 'konu') try { localStorage.setItem('konu:' + dosya, JSON.stringify([yeni.b, yeni.k])); } catch (e) {}
+  if (yeni.tur !== 'ara') $('q').value = '';
+  if (yeni.tur !== 'duz' && yeni.tur !== 'ara') filtre = filtre === 'duz' ? 'hepsi' : filtre;
+  yanCiz();
+  $('list').innerHTML = '<p class="bos">Yükleniyor…</p>';
+  const ben = secim;
+  try {
+    let rows;
+    if (yeni.tur === 'konu') rows = await satirGetir({ p_bolum: yeni.b, p_konu: yeni.k });
+    else if (yeni.tur === 'supheli') rows = await satirGetir({ p_supheli: true });
+    else if (yeni.tur === 'duz') {
+      const ks = [...D.values()].filter(d => d.s === dosya && (!secilenKim || d.kim === secilenKim)).map(d => d.k);
+      rows = [];
+      for (let i = 0; i < ks.length; i += 400) rows.push(...await satirGetir({ p_anahtarlar: ks.slice(i, i + 400) }));
+    } else {
+      rows = await satirGetir({ p_q: yeni.q });
+      const q = kucuk(yeni.q), var_ = new Set(rows.map(r => r.k));
+      const ek = [...D.values()].filter(d => d.s === dosya && !var_.has(d.k) && kucuk(d.yeni).includes(q)).map(d => d.k).slice(0, 400);
+      if (ek.length) rows.push(...await satirGetir({ p_anahtarlar: ek }));
+    }
+    if (ben !== secim) return;
+    ROWS = rows; SATIR = new Map(rows.map(r => [r.k, r]));
+    if (yeni.tur === 'konu') konuSayEsitle();
+  } catch (e) {
+    if (ben === secim) $('list').innerHTML = '<p class="bos">Yüklenemedi: ' + kac(e.message || String(e)) + '</p>';
+    return;
+  }
+  listeCiz();
+  window.scrollTo(0, 0);
+}
+// Açık konunun kenar çubuğu sayısını yüklenen satırlarla eşitle
+function konuSayEsitle() {
+  const c = secKonu();
+  if (!c) return;
+  const ok = ROWS.filter(r => r.ok).length;
+  if (c.okunan !== ok || c.toplam !== ROWS.length) { c.okunan = ok; c.toplam = ROWS.length; yanCiz(); }
+}
+function sonrakiKonu() {
+  const c = secKonu(), i = c ? KONU.indexOf(c) : -1;
+  const uygun = x => x.okunan < x.toplam && (!x.ustlenen || x.ustlenen === benim);
+  const n = KONU.slice(i + 1).find(uygun) || KONU.slice(0, Math.max(0, i)).find(uygun);
+  if (!n) return bildir('Bu sekmede okunmamış, boşta konu kalmadı.');
+  ac({ tur: 'konu', b: n.bolum, k: n.konu });
+}
+
+// ---- Okundu / üstlenme ----
+async function okIsaretle(ks, durum) {
+  if (!benim) { bildir('İşaretlemek için sağ üstten erişim kodunu gir.'); return; }
+  const s = dosya, onceki = new Map();
+  for (const k of ks) { const r = SATIR.get(k); if (r) { onceki.set(k, r.ok); r.ok = durum ? benim : null; } }
+  yerelSay(); listeCizKoru();
+  for (let i = 0; i < ks.length; i += 1000) {
+    const { error } = await sb.rpc('okundu_isaretle', { p_kod: kod, p_sekme: s, p_anahtarlar: ks.slice(i, i + 1000), p_okundu: durum });
+    if (error) {
+      for (const [k, v] of onceki) { const r = SATIR.get(k); if (r) r.ok = v; }
+      yerelSay(); listeCizKoru();
+      bildir(error.code === '28000' ? 'Erişim kodu geçersiz; tekrar giriş yap.' : 'Kaydedilemedi: ' + error.message);
+      if (error.code === '28000') cikis();
+      return;
+    }
+  }
+}
+function yerelSay() { if (secim && secim.tur === 'konu') konuSayEsitle(); else konuYenileSoz(); }
+// Filtre "okunmamışlar"ken işaretlenen satır listeden düşer; imleç aynı sırada kalsın
+function listeCizKoru() { const y = window.scrollY; listeCiz(); window.scrollTo(0, y); imlecKoy(imlec, false); }
+async function ustlen(al) {
+  if (!benim) { bildir('Üstlenmek için sağ üstten erişim kodunu gir.'); return; }
+  const c = secKonu(); if (!c) return;
+  const { data, error } = await sb.rpc('ustlen', { p_kod: kod, p_sekme: dosya, p_bolum: c.bolum, p_konu: c.konu, p_al: al });
+  if (error) { bildir('Kaydedilemedi: ' + error.message); return; }
+  c.ustlenen = data;
+  if (al && data !== benim) bildir(data + ' bu konuyu senden önce üstlenmiş.');
+  yanCiz(); kbasCiz();
+}
+let kyT;
+// Kısma: ekip art arda işaretlerken sayaç sürekli ertelenmesin, en geç 4 sn'de bir yenilensin
+const konuYenileSoz = () => { if (kyT) return; kyT = setTimeout(async () => { kyT = null; try { await konuYukle(); konuSayEsitle(); yanCiz(); if (secim) kbasCiz(); } catch (e) {} }, 4000); };
+
+// ---- Düzenleme ----
+function duzenle(el) {
+  if (el.querySelector('textarea')) return;
+  if (!benim) { bildir('Düzenlemek için sağ üstten erişim kodunu gir.'); return; }
+  const s = dosya, r = SATIR.get(el.dataset.k), id = kimlik(s, r.k);
+  const basZaman = D.has(id) ? D.get(id).t : null;
+  const ta = document.createElement('textarea');
+  ta.value = trOf(r);
+  el.innerHTML = '';
+  el.appendChild(ta);
+  el.insertAdjacentHTML('beforeend', '<span class="kisayol">Enter: kaydet · Shift+Enter: alt satır · Esc: vazgeç</span>');
+  const boy = () => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 2 + 'px'; };
+  boy(); ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+  yayin('duzenliyor', id);
+  let bitti = false;
+  const kapat = async kaydet => {
+    if (bitti) return; bitti = true;
+    yayin('bitti', id);
+    const yeni = ta.value, simdi = D.has(id) ? D.get(id).yeni : r.tr;
+    const yenile = () => { if (el.isConnected) el.outerHTML = trHtml(r); };
+    if (!kaydet || yeni === simdi || (yeni.trim() === '' && !D.has(id))) return yenile();
+    const sonZaman = D.has(id) ? D.get(id).t : null;
+    if (sonZaman !== basZaman && D.has(id) && !confirm(D.get(id).kim + ' bu satırı sen düzenlerken değiştirdi. Üzerine yazılsın mı?')) return yenile();
+    const onceki = D.get(id);
+    const sil = yeni.trim() === '' || yeni === r.tr;
+    if (sil) D.delete(id); else D.set(id, { s, k: r.k, yeni, eski: r.tr, kim: benim, t: new Date().toISOString() });
+    duzCiz(); yenile();
+    const { error } = await sb.rpc('duzelt', { p_kod: kod, p_sekme: s, p_anahtar: r.k, p_yeni: sil ? null : yeni });
+    if (error) {
+      if (onceki) D.set(id, onceki); else D.delete(id);
+      duzCiz(); satirYenile(s, r.k);
+      bildir(error.code === '28000' ? 'Erişim kodu geçersiz; tekrar giriş yap.' : 'Kaydedilemedi: ' + error.message);
+      if (error.code === '28000') cikis();
+    } else if (!sil && !r.ok && s === dosya) okIsaretle([r.k], true);   // düzelten satırı okumuştur
+  };
+  ta.oninput = boy;
+  ta.onkeydown = e => {
+    if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); kapat(true); }
+    else if (e.key === 'Escape') { e.preventDefault(); kapat(false); }
+  };
+  ta.onblur = () => kapat(true);
+}
+$('list').addEventListener('click', e => {
+  const git = e.target.closest('[data-git]');
+  if (git) { const r = gorunen[+git.dataset.git]; return ac({ tur: 'konu', b: r.b, k: r.ko }); }
+  const row = e.target.closest('.row');
+  if (row) imlecKoy(+row.dataset.i, false);
+  const ok = e.target.closest('.ok');
+  if (ok) { const r = SATIR.get(ok.dataset.k); return okIsaretle([r.k], !r.ok); }
+  const el = e.target.closest('.tr');
+  if (el && !window.getSelection().toString()) duzenle(el);
+});
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey || e.metaKey || e.altKey || (e.target.closest && e.target.closest('input,textarea,select'))) return;
+  const r = gorunen[imlec];
+  if (e.key === 'j' || e.key === 'ArrowDown') { e.preventDefault(); imlecKoy(imlec + 1, true); }
+  else if (e.key === 'k' || e.key === 'ArrowUp') { e.preventDefault(); imlecKoy(imlec - 1, true); }
+  else if (e.key === ' ' && r) {
+    e.preventDefault();
+    const sonraki = gorunen[imlec + 1];
+    okIsaretle([r.k], !r.ok);
+    // "Okunmamışlar" filtresinde satır düşer: imleç bir sonraki satırda kalsın
+    const i = sonraki ? gorunen.indexOf(sonraki) : imlec;
+    imlecKoy(i >= 0 ? i : imlec, true);
+  }
+  else if (e.key === 'Enter' && r) {
+    e.preventDefault();
+    const el = $('list').querySelector('.row[data-i="' + imlec + '"] .tr');
+    if (el) duzenle(el);
+  }
+  else if (e.key === 'n' && secim && secim.tur === 'konu') { e.preventDefault(); sonrakiKonu(); }
+});
+
+// ---- Canlı akış ----
+function yayin(olay, id) {
+  if (kanal && benim) kanal.send({ type: 'broadcast', event: olay, payload: { id, kim: benim } });
+}
+function baglan() {
+  kanal = sb.channel('ceviri')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'duzeltme' }, p => {
+      const k = p.eventType === 'DELETE' ? p.old : p.new;
+      const id = kimlik(k.sekme, k.anahtar);
+      if (p.eventType === 'DELETE') D.delete(id); else D.set(id, duzSatir(p.new));
+      KIMDE.delete(id);
+      duzCiz(); satirYenile(k.sekme, k.anahtar); istatistikSoz();
+      if (k.sekme === dosya) konuYenileSoz();
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'okundu' }, p => {
+      const k = p.eventType === 'DELETE' ? p.old : p.new;
+      if (k.sekme !== dosya) return;
+      const r = SATIR.get(k.anahtar);
+      if (r) {
+        const yeni = p.eventType === 'DELETE' ? null : p.new.kim;
+        if (r.ok !== yeni) { r.ok = yeni; satirYenile(k.sekme, k.anahtar); kbasCiz(); if (secim.tur === 'konu') konuSayEsitle(); }
+      }
+      if (!r || secim.tur !== 'konu') konuYenileSoz();
+      else if (r.ko !== secim.k) konuYenileSoz();
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'ustlenme' }, p => {
+      const k = p.eventType === 'DELETE' ? p.old : p.new;
+      if (k.sekme !== dosya) return;
+      const c = KONU.find(x => x.bolum === k.bolum && x.konu === k.konu);
+      if (!c) return;
+      c.ustlenen = p.eventType === 'DELETE' ? null : p.new.kim;
+      yanCiz(); if (c === secKonu()) kbasCiz();
+    })
+    .on('broadcast', { event: 'duzenliyor' }, ({ payload }) => {
+      KIMDE.set(payload.id, { kim: payload.kim, t: Date.now() });
+      const [s, ...k] = payload.id.split('|'); satirYenile(s, k.join('|'));
+    })
+    .on('broadcast', { event: 'bitti' }, ({ payload }) => {
+      KIMDE.delete(payload.id);
+      const [s, ...k] = payload.id.split('|'); satirYenile(s, k.join('|'));
+    })
+    .subscribe(durum => {
+      canliDurum = durum === 'SUBSCRIBED' ? 'acik' : 'kapali';
+      const n = $('canli'); if (!n) return;
+      n.className = 'nokta ' + canliDurum;
+      n.title = durum === 'SUBSCRIBED' ? 'Canlı: başkalarının değişikliği anında görünür' : 'Canlı bağlantı yok; sayfayı yenile';
+    });
+}
+setInterval(() => {   // süresi geçen "düzenliyor" işaretlerini temizle
+  for (const [id, p] of KIMDE) if (Date.now() - p.t > 90000) { KIMDE.delete(id); const [s, ...k] = id.split('|'); satirYenile(s, k.join('|')); }
+}, 30000);
+
+// ---- Düzeltme sayıları ----
+function duzCiz() {
+  const say = {}, kisiler = new Set();
+  for (const d of D.values()) { say[d.s] = (say[d.s] || 0) + 1; kisiler.add(d.kim); }
+  document.querySelectorAll('.tab').forEach(b => {
+    b.textContent = b.dataset.f;
+    if (say[b.dataset.f]) b.insertAdjacentHTML('beforeend', '<sup>' + say[b.dataset.f] + '</sup>');
+  });
+  $('duzsay').textContent = D.size + ' düzeltme';
+  const sel = $('kimsel'), onceki = sel.value;
+  sel.innerHTML = '<option value="">Düzelten: herkes</option>' + [...kisiler].sort().map(k => '<option>' + kac(k) + '</option>').join('');
+  sel.value = kisiler.has(onceki) ? onceki : '';
+  secilenKim = sel.value;
+  if (KONU.length) yanCiz();
+}
+
+// ---- Ekip istatistiği (sıralama yok: adlar alfabetik, çubuk yalnızca oranı gösterir) ----
+let istT;
+async function istatistikYukle() {
+  const { data, error } = await sb.rpc('istatistik');
+  if (error || !data) return;
+  const kutu = $('ekip');
+  const toplam = data.reduce((a, r) => a + r.toplam, 0), bugun = data.reduce((a, r) => a + r.bugun, 0);
+  kutu.hidden = toplam === 0;
+  ustAyarla();
+  if (toplam === 0) return;
+  $('ekipozet').innerHTML = 'Ekip birlikte <b>' + toplam + '</b> satırı düzeltti' + (bugun ? ' · bugün <b>' + bugun + '</b>' : '');
+  const enCok = Math.max(...data.map(r => r.toplam));
+  $('ekipliste').innerHTML = data.sort((a, b) => a.kim.localeCompare(b.kim, 'tr')).map(r =>
+    '<li><span>' + kac(r.kim) + '</span><span class="cubuk"><i style="width:' + Math.max(4, Math.round(r.toplam / enCok * 100)) + '%"></i></span>' +
+    '<span class="sayi">' + r.toplam + (r.hafta ? ' · bu hafta ' + r.hafta : '') + '</span></li>').join('');
+}
+const istatistikSoz = () => { clearTimeout(istT); istT = setTimeout(istatistikYukle, 1500); };
+setInterval(istatistikYukle, 120000);
+$('ekip').addEventListener('toggle', ustAyarla);
+
+// ---- Giriş ----
+function girisCiz() {
+  $('giris').innerHTML = '<span class="say"><i class="nokta" id="canli"></i>' + (benim ? 'Giriş: <b>' + kac(benim) + '</b>' : 'Salt okunur') + '</span>' +
+    (benim ? '<button class="btn" id="cik">Çıkış</button>'
+           : '<input id="kodgir" type="password" placeholder="Erişim kodu" autocomplete="off"><button class="btn ana" id="gir">Giriş</button>');
+  $('ipucu').textContent = benim
+    ? 'Soldan bir konu seç, satırları sırayla oku. Doğruysa ✓ (Boşluk), yanlışsa Türkçeye tıklayıp düzelt. Bir konuyu üstlenirsen başkaları onu dolu görür.'
+    : 'Metinleri herkes okuyabilir. Okundu işaretlemek ve düzeltmek için sağ üstten sana verilen erişim kodunu gir.';
+  $('canli').className = 'nokta ' + canliDurum;
+  if (benim) $('cik').onclick = cikis;
+  else {
+    const gir = async () => { const k = $('kodgir').value.trim(); if (k) await giris(k, true); };
+    $('gir').onclick = gir;
+    $('kodgir').onkeydown = e => { if (e.key === 'Enter') gir(); };
+  }
+  ustAyarla();
+  if (secim) kbasCiz();
+  if (KONU.length) yanCiz();
+}
+async function giris(k, bildirim) {
+  const { data, error } = await sb.rpc('kimsin', { p_kod: k });
+  if (error) { if (bildirim) bildir('Bağlanılamadı: ' + error.message); return; }
+  if (!data) { if (bildirim) bildir('Kod geçersiz.'); return; }
+  kod = k; benim = data;
+  try { localStorage.setItem('kod', k); } catch (e) {}
+  girisCiz();
+}
+function cikis() {
+  benim = null; kod = '';
+  try { localStorage.removeItem('kod'); } catch (e) {}
+  girisCiz();
+}
+
+// ---- Üst çubuk ----
+$('kimsel').onchange = e => { secilenKim = e.target.value; ac({ tur: 'duz' }); };
+$('indir').onclick = async () => {
+  // duzeltme_al.py EN'i kaynakla karşılaştırır: sayfada yüklü olmayan satırların EN'ini çek
+  const EN = new Map();
+  try {
+    const sekmeler = new Map();
+    for (const d of D.values()) { if (!sekmeler.has(d.s)) sekmeler.set(d.s, []); sekmeler.get(d.s).push(d.k); }
+    for (const [s, ks] of sekmeler) for (let i = 0; i < ks.length; i += 400) {
+      const { data, error } = await sb.rpc('satirlar', { p_sekme: s, p_anahtarlar: ks.slice(i, i + 400) });
+      if (error) throw error;
+      for (const r of data) EN.set(kimlik(s, r.anahtar), r.en);
+    }
+  } catch (e) { return bildir('İndirilemedi: ' + (e.message || e)); }
+  const satirlar = [...D.values()].map(d => ({ sekme: d.s, anahtar: d.k, en: EN.get(kimlik(d.s, d.k)) || '', eski: d.eski, yeni: d.yeni, kim: d.kim }));
+  const veri = { _tur: 'ALifeTR_duzeltme', _surum: 1, _tarih: new Date().toISOString(), _kim: benim || 'ekip', satirlar };
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(veri, null, 2)], { type: 'application/json' }));
+  const t = new Date(), iki = n => String(n).padStart(2, '0');
+  a.download = 'duzeltmeler-' + t.getFullYear() + iki(t.getMonth() + 1) + iki(t.getDate()) + '-' + iki(t.getHours()) + iki(t.getMinutes()) + '.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+};
+async function sekmeAc() {
+  KONU = []; secim = null; ROWS = []; SATIR = new Map(); gorunen = [];
+  $('konular').innerHTML = '<p class="say">Yükleniyor…</p>'; $('list').innerHTML = ''; $('kbas').innerHTML = '';
+  const s = dosya;
+  try { await konuYukle(); } catch (e) { $('konular').innerHTML = '<p class="say">Yüklenemedi: ' + kac(e.message || String(e)) + '</p>'; return; }
+  if (s !== dosya) return;
+  let son = null;
+  try { son = JSON.parse(localStorage.getItem('konu:' + dosya)); } catch (e) {}
+  const c = (son && KONU.find(x => x.bolum === son[0] && x.konu === son[1])) || KONU.find(x => x.okunan < x.toplam) || KONU[0];
+  if (c) ac({ tur: 'konu', b: c.bolum, k: c.konu }); else yanCiz();
+}
+document.querySelectorAll('.tab').forEach(b => {
+  b.setAttribute('aria-pressed', b.dataset.f === dosya);
+  b.onclick = () => {
+    dosya = b.dataset.f;
+    try { localStorage.setItem('dosya', dosya); } catch (e) {}
+    document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-pressed', x === b));
+    sekmeAc();
+  };
+});
+let onceSecim = null, qT;
+$('q').oninput = () => {
+  clearTimeout(qT);
+  qT = setTimeout(() => {
+    const q = $('q').value.trim();
+    if (q.length >= 2) { if (!secim || secim.tur !== 'ara') onceSecim = secim; ac({ tur: 'ara', q }); }
+    else if (!q && secim && secim.tur === 'ara') ac(onceSecim || { tur: 'supheli' });
+  }, 350);
+};
+
+// ---- Açılış ----
+(async () => {
+  if (matchMedia('(max-width:900px)').matches) $('yan').classList.add('kapali');
+  ustAyarla();
+  girisCiz();
+  baglan();
+  try {
+    for (const r of await hepsi('duzeltme', '*', ['sekme', 'anahtar'])) D.set(kimlik(r.sekme, r.anahtar), duzSatir(r));
+  } catch (e) { bildir('Düzeltmeler yüklenemedi: ' + (e.message || e)); }
+  duzCiz(); istatistikYukle();
+  if (kod) await giris(kod, false);
+  if (!benim && kod) cikis();
+  sekmeAc();
+})();
+</script>
+</body>
+</html>
